@@ -15,7 +15,7 @@ router.post('/sendMail',function(req,res){
 	var emailData = {
 		'FromEmail': 'rivera-miguel@hotmail.com',
 		'FromName': 'Soporte de TI',
-		'Subject': 'Problema en el area: '+req.body.department,
+		'Subject': 'Problema en el area: '+req.body.department+' Prioridad: '+req.body.priority,
 		'Text-part': req.body.description,
 		'Recipients': [{'Email': 'miguel.rivera@correo.usa.edu.co'}],
 		'Attachments': [{
