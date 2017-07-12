@@ -4,12 +4,21 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var dbConfig = require('./db.js');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var expressSession = require('express-session');
 
+mongoose.connect(dbConfig.url);
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+app.use(expressSession({secret:'mySecret :v'}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,7 +28,7 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({limit:'7mb', extended: true }));
+app.use(bodyParser.urlencoded({limit:'4mb', extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -44,7 +53,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(3000);
-console.log('Listening on port 3000');
+app.listen(27000);
+console.log('Listening on port 27000');
 
 module.exports = app;
