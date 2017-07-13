@@ -4,9 +4,7 @@ var passport = require('passport');
 var Admin = require('../models/admin');
 var LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy({usernameField:'email'},function(email,password,done){
-	console.log(email+' '+password)
-}));
+
 
 passport.serializeUser(function(user,done){
 	done(null,user._id);
