@@ -35,8 +35,7 @@ passport.use('local',new LocalStrategy({passReqToCallback:true},function(req,use
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-	
- 	res.json({message:'Root'})
+ 	res.render('login');
 });
 
 router.post('/newAdmin',function(req,res){
@@ -67,12 +66,16 @@ router.post('/login',passport.authenticate('local',{
 
 router.get('/dashboard',function(req,res){
 	if(req.isAuthenticated()){
-
+		res.json({message:"logged in!"})
 	}else{
-		res.redirect('/user')
+		res.redirect('/users');
 	}
 });
 
+router.get('/logout',function(req,res){
+	req.logout();
+	res.redirect('/users');
+});
 
 
 //obtain user data: req.user

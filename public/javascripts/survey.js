@@ -14,7 +14,7 @@ window.survey = new Survey.Model( { questions: [
      ]});
 survey.onComplete.add(function(result) {
 	var res=result.data;
-	if(typeof res.file==undefined){
+	if(typeof res.file=="undefined"){
 		$.post('/sendMailUnat',res,function(data,status){
 			console.log('data sent:'+res);
 		});
