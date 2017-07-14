@@ -4,8 +4,6 @@ var passport = require('passport');
 var Admin = require('../models/admin');
 var LocalStrategy = require('passport-local').Strategy;
 
-
-
 passport.serializeUser(function(user,done){
 	done(null,user._id);
 });
@@ -16,15 +14,36 @@ passport.deserializeUser(function(id,done){
 	});
 });
 
+passport.use('local',new LocalStrategy({passReqToCallback:true},function(req,username,password,done){
+	Admin.findOne({'email':username},function(err,user){
+		if(err) throw err;
+		if(!user){
+			console.log('User not Find!');
+			return done(null,false,{message:'Usuario no encontrado'});
+		}
+		Admin.comparePassword(password,user.password,function(err,isMatch){
+			if(err) throw err;
+			if(isMatch){
+				return done(null,user);
+			}else{
+				console.log('Invalid password');
+				return done(null,false,{message:'Contraseña incorrecta'});
+			}
+		});
+	});
+}));
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  
+	
+ 	res.json({message:'Root'})
 });
 
 router.post('/newAdmin',function(req,res){
 	var admi=new Admin({
 		name:req.body.name,
 		email:req.body.email,
+		category:req.body.category,
 		password:req.body.password
 	});
 	Admin.findOne({'email':req.body.email},function(err,user){
@@ -47,11 +66,14 @@ router.post('/login',passport.authenticate('local',{
 }));
 
 router.get('/dashboard',function(req,res){
-	if(!req.user){
-		res.json({message:'you are not authenticated'});
+	if(req.isAuthenticated()){
+
 	}else{
-		res.json({message:'user: '+req.user.name});
+		res.redirect('/user')
 	}
 });
 
+
+
+//obtain user data: req.user
 module.exports = router;

@@ -6,8 +6,9 @@ var Ticket=require('./ticket');
 var AdminSchema=Schema({
 	name:{type:String,required:true},
 	email:{type:String,required:true},
+	category:String,
 	password:{type:String,required:true},
-	tickets:[{type:String}]
+	tickets:[{type: Schema.Types.ObjectId, ref:'Ticket'}]
 });
 
 AdminSchema.pre('save',function(next){

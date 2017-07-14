@@ -8,6 +8,7 @@ var dbConfig = require('./db.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var expressSession = require('express-session');
+var flash=require('req-flash');
 
 mongoose.connect(dbConfig.url);
 
@@ -20,6 +21,7 @@ app.use(expressSession({secret:'mySecret :v'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(flash());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -53,7 +55,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(27000);
-console.log('Listening on port 27000');
+var port=27000;
+
+app.listen(port,function(){
+	console.log('Help-desk project listening on port: '+port);
+});
 
 module.exports = app;
