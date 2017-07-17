@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var Admin = require('../models/admin');
+var Ticket= require('../models/ticket');
+var Category = require('../models/category');
 var LocalStrategy = require('passport-local').Strategy;
 
 passport.serializeUser(function(user,done){
@@ -66,7 +68,7 @@ router.post('/login',passport.authenticate('local',{
 
 router.get('/dashboard',function(req,res){
 	if(req.isAuthenticated()){
-		res.json({message:"logged in!"})
+		res.render('dashboard',{usuario:req.user.name});
 	}else{
 		res.redirect('/users');
 	}
@@ -77,6 +79,63 @@ router.get('/logout',function(req,res){
 	res.redirect('/users');
 });
 
+//----------------------------------------------> Tickets routes
 
+router.get('/getTickets',function(req,res){
+	if(req.isAuthenticated()){
+		Admin.findOne({_id:req.user._id},'tickets')
+		.populate('tickets')
+		.exec((err,doc)=>{
+			if(err) throw err;
+			res.json(doc);
+		});
+	}else{
+		res.json({message:'No se encuentra autenticado'});
+	}
+});
+
+router.get('/getAliveTickets',function(req,res){
+	if(req.isAuthenticated()){
+		Admin.findOne({_id:req.user._id},'tickets')
+		.populate({path:'tickets',match:{isAlive:true}})
+		.exec((err,doc)=>{
+			if(err) throw err;
+			res.json(doc);
+		});
+	}else{
+		res.json({message:'No se encuentra autenticado'});
+	}
+});
+
+//----------------------------------------------> Categories routes
+
+router.post('/createCategory',function(req,res){
+	if(req.isAuthenticated()){
+		var cate = new Category({
+			name:req.body.cateName
+		});
+		Category.findOne({name:req.body.cateName},function(err,doc){
+			if(err) throw err;
+			if(doc){
+				res.json({message:'La categoria ya se encuentra en la bd'});
+			}else{
+				cate.save(function(err){
+					if(err) throw err;
+					console.log('La categoria fue creada');
+					res.json({message:'Categoria creada'});
+				});
+			}
+		});
+	}else{
+		res.json({message:'No se encuentra autenticado'});
+	}
+});
+
+router.get('/categories',function(req,res){
+	Category.find({},function(err,docs){
+		if(err) throw err;
+		res.json(docs);
+	});
+});
 //obtain user data: req.user
 module.exports = router;

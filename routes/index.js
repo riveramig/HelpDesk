@@ -3,6 +3,7 @@ var Mailjet= require('node-mailjet').connect('d269fb35916cab84fdab2f73c3fcfab3',
 var router = express.Router();
 var Admin = require('../models/admin.js');
 var Ticket = require('../models/ticket.js');
+var Category = require('../models/category.js');
 var sendEmail= Mailjet.post('send');
 
 /* GET home page. */
@@ -13,6 +14,7 @@ router.get('/mesaTi', function(req, res, next) {
 router.post('/sendMailAtach',function(req,resp){
 	var str=req.body.file;
 	var res=str.split(",");
+	var date=new Date();
 	tiq=new Ticket({
 		name:req.body.name,
 		cc:req.body.cc,
@@ -21,7 +23,8 @@ router.post('/sendMailAtach',function(req,resp){
 		description:req.body.description,
 		isAlive:true,
 		tipoFalla:req.body.falla,
-		priority:req.body.priority
+		priority:req.body.priority,
+		dateCreated:new Date()
 	});
 	tiq.file.contentType=res[0];
 	tiq.file.data=res[1];
@@ -66,7 +69,8 @@ router.post('/sendMailUnat',function(req,res){
 		file:null,
 		isAlive:true,
 		tipoFalla:req.body.falla,
-		priority:req.body.priority
+		priority:req.body.priority,
+		dateCreated:new Date()
 	});
 	tiq.save(function(err){
 		if(err) throw err;
@@ -99,4 +103,10 @@ router.post('/test',function(req,res){
 	res.json(req.body);
 });
 
+router.get('/categories',function(req,res){
+	Category.find({},function(err,docs){
+		if(err) throw err;
+		res.json(docs);
+	});
+});
 module.exports = router;

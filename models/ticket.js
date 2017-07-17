@@ -12,7 +12,9 @@ var ticketSchema=new Schema({
 	priority:String,
 	tipoFalla:String,
 	procedure:String,
-	satisfaction:String
+	satisfaction:String,
+	dateCreated:Date,
+	dateFinished:Date
 });
 
 module.exports=mongoose.model('Ticket',ticketSchema);
